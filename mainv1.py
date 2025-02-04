@@ -8,7 +8,7 @@ import threading
 from PIL import Image
 import io
 
-# Ensure dependencies are available
+
 try:
     import streamlit as st
     import speech_recognition as sr
@@ -19,15 +19,14 @@ try:
 except ModuleNotFoundError as e:
     st.error(f"Missing dependency: {e.name}. Please install it before running the application.")
 
-# Initialize pygame mixer
 pygame.init()
 pygame.mixer.init()
 
-# Hugging Face API for DeepSeek-R1 (Set your API key)
+# Hugging Face API for DeepSeek-R1 
 HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models/deepseek-ai/deepseek-r1"
-HEADERS = {"Authorization": "Bearer YOUR_HF_API_KEY"}  # Replace with your API key
+HEADERS = {"Authorization": "***********"}  
 
-# Function to recognize speech
+#recognize speech
 def recognize_speech():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
@@ -44,7 +43,7 @@ def recognize_speech():
     except sr.RequestError:
         st.session_state['messages'].append(("Bot", "Error with speech recognition service."))
 
-# Function to query LLM (DeepSeek-R1)
+#query LLM (DeepSeek-R1)
 def query_llm(text):
     payload = {"inputs": text}
     try:
@@ -54,7 +53,7 @@ def query_llm(text):
     except requests.exceptions.RequestException as e:
         return f"Error querying model: {str(e)}"
 
-# Function to convert text to speech using pygame
+#convert text to speech using pygame
 def text_to_speech(text):
     tts = gTTS(text=text, lang="en")
     filename = "response.mp3"
@@ -68,13 +67,13 @@ def text_to_speech(text):
     
     os.remove(filename)
 
-# Function to process text
+#process text
 def process_text(text):
     response_text = query_llm(text)
     st.session_state['messages'].append(("Bot", response_text))
     threading.Thread(target=text_to_speech, args=(response_text,)).start()
 
-# Function to process image
+#process image
 def process_image(image):
     st.session_state['messages'].append(("Bot", "Analyzing image..."))
     image_bytes = io.BytesIO()
